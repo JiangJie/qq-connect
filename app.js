@@ -9,19 +9,21 @@ var express = require('express')
   , path = require('path');
 
 var app = express();
-
+var store  = new express.session.MemoryStore;
 app.configure(function(){
-  app.set('port', process.env.PORT || 2008);
+  app.set('port', process.env.PORT || PORT);
   app.set('views', __dirname + '/views');
   app.use(express.favicon());
-  app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+  app.use(express.cookieParser());
+  app.use(express.session({secret: 'secret', store: store}));
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
 app.configure('development', function(){
+  app.use(express.logger('dev'));
   app.use(express.errorHandler());
 });
 
